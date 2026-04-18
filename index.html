@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Voice Notes</title>
+
+<style>
+body {
+  background: #0f0f0f;
+  font-family: Arial;
+  color: white;
+  padding: 20px;
+}
+
+.container {
+  max-width: 400px;
+  margin: auto;
+}
+
+.note {
+  background: #1e1e1e;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+button {
+  background: #ff4d6d;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+.title {
+  font-size: 14px;
+}
+
+input[type="range"] {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.time {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 5px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+  <h2>🎧 Voice Notes</h2>
+
+  <!-- NOTE 1 -->
+  <div class="note">
+    <div class="top">
+      <span class="title">Unsaid words</span>
+      <button onclick="togglePlay('a1', this)">Play</button>
+    </div>
+    <input type="range" id="seek1" value="0">
+    <div class="time" id="time1">0:00</div>
+    <audio id="a1" src="Voice1.m4a"></audio>
+  </div>
+
+  <!-- NOTE 2 -->
+  <div class="note">
+    <div class="top">
+      <span class="title">Something I Never Said</span>
+      <button onclick="togglePlay('a2', this)">Play</button>
+    </div>
+    <input type="range" id="seek2" value="0">
+    <div class="time" id="time2">0:00</div>
+    <audio id="a2" src="Voice2.m4a"></audio>
+  </div>
+
+  <!-- NOTE 3 -->
+  <div class="note">
+    <div class="top">
+      <span class="title">Buddhu for a reason</span>
+      <button onclick="togglePlay('a3', this)">Play</button>
+    </div>
+    <input type="range" id="seek3" value="0">
+    <div class="time" id="time3">0:00</div>
+    <audio id="a3" src="Voice3.m4a"></audio>
+  </div>
+
+  <!-- NOTE 4 -->
+  <div class="note">
+    <div class="top">
+      <span class="title">Last One</span>
+      <button onclick="togglePlay('a4', this)">Play</button>
+    </div>
+    <input type="range" id="seek4" value="0">
+    <div class="time" id="time4">0:00</div>
+    <audio id="a4" src="Voice4.m4a"></audio>
+  </div>
+
+</div>
+
+<script>
+let currentAudio = null;
+let currentBtn = null;
+
+function togglePlay(id, btn) {
+  let audio = document.getElementById(id);
+
+  // stop previous
+  if (currentAudio && currentAudio !== audio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+    if (currentBtn) currentBtn.innerText = "Play";
+  }
+
+  if (audio.paused) {
+    audio.play();
+    btn.innerText = "Pause";
+    currentAudio = audio;
+    currentBtn = btn;
+  } else {
+    audio.pause();
+    btn.innerText = "Play";
+  }
+
+  setupSeekBar(audio, id);
+}
+
+function setupSeekBar(audio, id) {
+  let num = id.slice(1);
+  let seek = document.getElementById("seek" + num);
+  let time = document.getElementById("time" + num);
+
+  audio.ontimeupdate = () => {
+    seek.max = audio.duration;
+    seek.value = audio.currentTime;
+
+    let min = Math.floor(audio.currentTime / 60);
+    let sec = Math.floor(audio.currentTime % 60);
+    if (sec < 10) sec = "0" + sec;
+
+    time.innerText = `${min}:${sec}`;
+  };
+
+  seek.oninput = () => {
+    audio.currentTime = seek.value;
+  };
+}
+</script>
+
+</body>
+</html>
